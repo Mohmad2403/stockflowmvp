@@ -53,7 +53,7 @@ function authMiddleware(req, res, next) {
   }
 }
 
-app.post('/api/auth/signup', async (req, res) => {
+app.post('/auth/signup', async (req, res) => {
   try {
     const { email, password, orgName } = req.body;
     if (!email || !password || !orgName) return res.status(400).json({ message: 'All fields required' });
@@ -69,7 +69,7 @@ app.post('/api/auth/signup', async (req, res) => {
   }
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
@@ -85,7 +85,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-app.get('/api/products', authMiddleware, async (req, res) => {
+app.get('/products', authMiddleware, async (req, res) => {
   try {
     const products = await Product.find({ orgId: req.user.orgId }).sort({ createdAt: -1 });
     res.json(products);
@@ -94,7 +94,7 @@ app.get('/api/products', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/api/products', authMiddleware, async (req, res) => {
+app.post('/products', authMiddleware, async (req, res) => {
   try {
     const { name, sku, description, quantity, costPrice, sellingPrice, lowStockThreshold } = req.body;
     if (!name || !sku) return res.status(400).json({ message: 'Name and SKU required' });
@@ -107,7 +107,7 @@ app.post('/api/products', authMiddleware, async (req, res) => {
   }
 });
 
-app.put('/api/products/:id', authMiddleware, async (req, res) => {
+app.put('/products/:id', authMiddleware, async (req, res) => {
   try {
     const product = await Product.findOne({ _id: req.params.id, orgId: req.user.orgId });
     if (!product) return res.status(404).json({ message: 'Product not found' });
@@ -124,7 +124,7 @@ app.put('/api/products/:id', authMiddleware, async (req, res) => {
   }
 });
 
-app.delete('/api/products/:id', authMiddleware, async (req, res) => {
+app.delete('/products/:id', authMiddleware, async (req, res) => {
   try {
     const product = await Product.findOneAndDelete({ _id: req.params.id, orgId: req.user.orgId });
     if (!product) return res.status(404).json({ message: 'Product not found' });
@@ -134,7 +134,7 @@ app.delete('/api/products/:id', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/api/dashboard', authMiddleware, async (req, res) => {
+app.get('/dashboard', authMiddleware, async (req, res) => {
   try {
     const products = await Product.find({ orgId: req.user.orgId });
     const org = await Organization.findById(req.user.orgId);
@@ -151,7 +151,7 @@ app.get('/api/dashboard', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/api/settings', authMiddleware, async (req, res) => {
+app.get('/settings', authMiddleware, async (req, res) => {
   try {
     const org = await Organization.findById(req.user.orgId);
     if (!org) return res.status(404).json({ message: 'Organization not found' });
@@ -161,7 +161,7 @@ app.get('/api/settings', authMiddleware, async (req, res) => {
   }
 });
 
-app.put('/api/settings', authMiddleware, async (req, res) => {
+app.put('/settings', authMiddleware, async (req, res) => {
   try {
     const { defaultLowStockThreshold } = req.body;
     const org = await Organization.findByIdAndUpdate(req.user.orgId, { defaultLowStockThreshold }, { new: true });
